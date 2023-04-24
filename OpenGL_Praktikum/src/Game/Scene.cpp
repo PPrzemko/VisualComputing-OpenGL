@@ -26,6 +26,11 @@ bool Scene::init()
                             0.0, 1.0, 1.0, 0.0, 0.0,
                             -0.5, 0.5, 0.0, 1.0, 0.0}; */
         //
+
+        /* Original
+        int indices[] = {0, 1, 2,
+                         0, 2, 4,
+                         4, 2, 3}; */
         float vertices[] = {-1 + 0.5, 1 - 0.5 , 1.0, 1.0, 1.0, //1
                             -1 +0.5, 0 - 0.5, 1.0, 1.0, 1.0, //2
                             -0.33 +0.5,0 - 0.5, 1.0, 1.0, 1.0, //3
@@ -33,10 +38,7 @@ bool Scene::init()
                             -0.66 +0.5, 0.33 - 0.5, 1.0, 1.0, 1.0, //5
                             -0.66 +0.5, 1 - 0.5, 1.0, 1.0, 1.0}; //6
 
-        /* Original
-        int indices[] = {0, 1, 2,
-                         0, 2, 4,
-                         4, 2, 3}; */
+
 
         int indices[] = {5, 1, 0, //1
                          5, 4, 0, //2
@@ -69,10 +71,19 @@ bool Scene::init()
         glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(indices), indices, GL_STATIC_DRAW);
 
         //Unbind
-        /*
         glBindVertexArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); */
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+        //1.4 Backface culling
+        /*
+         * if enabled OpenGL only renders visible faces
+         */
+        /*
+        glEnable(GL_CULL_FACE);
+        glFrontFace(GL_CCW);
+        glCullFace(GL_BACK); */
+
 
         std::cout << "Scene initialization done\n";
         return true;
