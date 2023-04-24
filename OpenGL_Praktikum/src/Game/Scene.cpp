@@ -106,7 +106,7 @@ void Scene::render(float dt)
     * ************
     */
     glBindVertexArray(vaoID); //activate VAO and implicit VBO
-    glDrawElements(GL_TRIANGLES, 9,GL_UNSIGNED_INT,0);
+    glDrawElements(GL_TRIANGLES, 12,GL_UNSIGNED_INT,0);
     glBindVertexArray(0);
 
 
