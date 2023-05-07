@@ -4,6 +4,7 @@
 #include <ShaderProgram.h>
 #include <memory>
 #include <AssetManager.h>
+#include "Transform.h"
 
 class Scene
 {
@@ -28,6 +29,10 @@ private:
 	AssetManager m_assets;
     ShaderProgram* m_shader;
     GLuint vaoID, vboID;
+
+    int indSize;
+
+    Transform *rot;
 
 };
 

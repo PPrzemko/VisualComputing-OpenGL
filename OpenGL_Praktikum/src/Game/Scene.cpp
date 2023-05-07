@@ -19,33 +19,29 @@ bool Scene::init()
 		m_shader = m_assets.getShaderProgram("shader");
         m_shader->use();
 
-        /* Original
-        float vertices[] = {-0.5, -0.5, 0.0, 0.0, 1.0,
-                            0.5, -0.5, 0.0, 0.0, 1.0,
-                            0.5, 0.5, 0.0, 1.0, 0.0,
-                            0.0, 1.0, 1.0, 0.0, 0.0,
-                            -0.5, 0.5, 0.0, 1.0, 0.0}; */
-        //
+        float vertices[] = {0.5, -0.5, -0.5, 1, 0, 0,
+                            0.5, -0.5, 0.5, 0, 1, 0,
+                            -0.5, -0.5, 0.5, 0, 0, 1,
+                            -0.5, -0.5, -0.5, 1, 1, 0,
+                            0.5, 0.5, -0.5, 1, 0, 1,
+                            0.5, 0.5, 0.5, 0, 1, 1,
+                            -0.5, 0.5, 0.5, 1, 1, 1,
+                            -0.5, 0.5, -0.5, 0.5, 1, 0.5};
 
-        /* Original
-        int indices[] = {0, 1, 2,
-                         0, 2, 4,
-                         4, 2, 3}; */
+        int indices[] = {1, 2, 3,
+                         7, 6, 5,
+                         4, 5, 1,
+                         5, 6, 2,
+                         2, 6, 7,
+                         0, 3, 7,
+                         0, 1, 3,
+                         4, 7, 5,
+                         0, 4, 1,
+                         1, 5, 2,
+                         3, 2, 7,
+                         4, 0, 7};
 
-
-        float vertices[] = {-1 + 0.5, 1 - 0.5 , 1.0, 1.0, 1.0, //1 White
-                            -1 +0.5, 0 - 0.5, 1.0, 0.0, 0.0, //2 Red
-                            -0.33 +0.5,0 - 0.5, 0.0, 1.0, 0.0, //3 Green
-                            -0.33 +0.5, 0.33 - 0.5, 0.0, 0.0, 1.0, //4 Blue
-                            -0.66 +0.5, 0.33 - 0.5, 1.0, 1.0, 0.0, //5
-                            -0.66 +0.5, 1 - 0.5, 0.0, 1.0, 1.0}; //6
-
-
-
-        int indices[] = {4, 1, 0, //1
-                         0, 5, 4, //2
-                         4, 3, 2, //3
-                         1, 2, 4}; //4
+        indSize = sizeof(indices);
 		/*
 		 * ************
 		 * Place your code here!
@@ -61,31 +57,34 @@ bool Scene::init()
         glBindVertexArray(vaoID);
 
         //VAO Attribute Verticies
-        glVertexAttribPointer(0, 2, GL_FLOAT, false, 5*4, 0); //4 Byte one Float
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, 6*4, 0); //4 Byte one Float
         glEnableVertexAttribArray(0);
         //VAO Attribute Colors
-        glVertexAttribPointer(1, 3, GL_FLOAT, false, 5*4, (void*)8); //8 offset cause color begins at 9th byte
+        glVertexAttribPointer(1, 3, GL_FLOAT, false, 6*4, (void*)12); //8 offset cause color begins at 9th byte
         glEnableVertexAttribArray(1);
 
         GLuint iboID = 0;
         glGenBuffers(1, &iboID);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,iboID);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(indices), indices, GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER,indSize, indices, GL_STATIC_DRAW);
 
         //Unbind
         glBindVertexArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
+        rot = new Transform();
+        rot->rotate(glm::vec3(0.1,1.57f,0));
+
         //1.4 Backface culling
         /*
          * if enabled OpenGL only renders visible faces
          */
-        /*
         glEnable(GL_CULL_FACE);
         glFrontFace(GL_CCW);
-        glCullFace(GL_BACK); */
+        glCullFace(GL_BACK);
 
+        glClearColor(0.10f, 0.10f, 0.10f, 1.0f);
 
         std::cout << "Scene initialization done\n";
         return true;
@@ -99,14 +98,16 @@ bool Scene::init()
 void Scene::render(float dt)
 {
 
-
+    glClear(GL_COLOR_BUFFER_BIT);
     /*
     * ************
     * Place your code here!
     * ************
     */
     glBindVertexArray(vaoID); //activate VAO and implicit VBO
-    glDrawElements(GL_TRIANGLES, 12,GL_UNSIGNED_INT,0);
+    m_shader->setUniform("model", rot->getMatrix() , false);
+    rot->rotate(glm::vec3(0*dt, 0.1f*dt, 0));
+    glDrawElements(GL_TRIANGLES, indSize,GL_UNSIGNED_INT,0);
     glBindVertexArray(0);
 
 
