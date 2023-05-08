@@ -86,6 +86,7 @@ bool Scene::init()
         //Left Arm
         leftArm = new Transform();
         leftArm->translate(glm::vec3(-0.3,0.15,0));
+        leftArm->rotate(glm::vec3(-0.80,0,0));
 
         leftUpperArm = new Transform();
         leftUpperArm->scale(glm::vec3(0.1,0.3,0.1));
@@ -98,6 +99,7 @@ bool Scene::init()
         //Right Arm
         rightArm = new Transform();
         rightArm->translate(glm::vec3(0.3,0.15,0));
+        rightArm->rotate(glm::vec3(0.80,0,0));
 
         rightUpperArm = new Transform();
         rightUpperArm->scale(glm::vec3(0.1,0.3,0.1));
@@ -110,12 +112,12 @@ bool Scene::init()
         leftLeg = new Transform();
         leftLeg->translate(glm::vec3(-0.1,-0.6,0));
         leftLeg->scale(glm::vec3(0.1,0.5,0.1));
-        leftLeg->rotateAroundPoint(glm::vec3(0,-0.3,0),glm::vec3(0.45,0,0));
+        leftLeg->rotateAroundPoint(glm::vec3(-0.1,-0.12,0),glm::vec3(-0.80,0,0));
 
         rightLeg = new Transform();
         rightLeg->translate(glm::vec3(0.1,-0.6,0));
         rightLeg->scale(glm::vec3(0.1,0.5,0.1));
-        rightLeg->rotateAroundPoint(glm::vec3(0,-0.3,0),glm::vec3(-0.45,0,0));
+        rightLeg->rotateAroundPoint(glm::vec3(0.1,-0.12,0),glm::vec3(0.80,0,0));
 
 
         //1.4 Backface culling
@@ -132,6 +134,8 @@ bool Scene::init()
         glDepthFunc(GL_GREATER);
         glClearDepth(0.0);
 
+        totalTime= 0;
+        reverseAnim = true;
 
         std::cout << "Scene initialization done\n";
         return true;
@@ -144,7 +148,13 @@ bool Scene::init()
 
 void Scene::render(float dt)
 {
+    totalTime += dt;
+    if(totalTime > 3.5){
+        reverseAnim = !reverseAnim;
+        totalTime = 0;
 
+    }
+    //std::cout << "TotalTime: " << totalTime << std::endl;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     /*
     * ************
@@ -189,7 +199,21 @@ void Scene::render(float dt)
 
     glBindVertexArray(0);
 
+    if(reverseAnim){
 
+        leftArm->rotate(glm::vec3(0.45*dt,0,0));
+        rightArm->rotate(glm::vec3(-0.45*dt,0,0));
+
+        leftLeg->rotateAroundPoint(glm::vec3(-0.1,-0.12,0),glm::vec3(0.45 *dt,0,0));
+        rightLeg->rotateAroundPoint(glm::vec3(0.1,-0.12,0),glm::vec3(-0.45 *dt,0,0));
+    }else{
+
+        leftArm->rotate(glm::vec3(-0.45*dt,0,0));
+        rightArm->rotate(glm::vec3(0.45*dt,0,0));
+
+        leftLeg->rotateAroundPoint(glm::vec3(-0.1,-0.12,0),glm::vec3(-0.45 *dt,0,0));
+        rightLeg->rotateAroundPoint(glm::vec3(0.1,-0.12,0),glm::vec3(0.45 *dt,0,0));
+    }
 
 
 }

@@ -32,6 +32,9 @@ private:
 
     int indSize;
 
+    float totalTime;
+    bool reverseAnim;
+
     Transform *world;
     Transform *head;
     Transform *body;
