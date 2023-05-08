@@ -1,5 +1,4 @@
+OpenGL_Praktikum/cmake-build-debug
+OpenGL_Praktikum/libs/cmake-build-debug
 .idea/discord.xml
 OpenGL_Praktikum/cmake-build-debug/
-# these files need to be changed to run on mac
-OpenGL_Praktikum/libs/glew-2.1.0/glew.pc
-OpenGL_Praktikum/libs/stb/stb_image_write.h
