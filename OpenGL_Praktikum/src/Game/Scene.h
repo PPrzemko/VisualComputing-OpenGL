@@ -32,7 +32,17 @@ private:
 
     int indSize;
 
-    Transform *rot;
+    Transform *world;
+    Transform *head;
+    Transform *body;
+    Transform *leftUpperArm;
+    Transform *rightUpperArm;
+    Transform *leftLowerArm;
+    Transform *rightLowerArm;
+    Transform *leftLeg;
+    Transform *rightLeg;
+    Transform *leftArm;
+    Transform *rightArm;
 
 };
 

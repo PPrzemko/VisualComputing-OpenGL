@@ -44,6 +44,7 @@ public:
 
 	void rotate(const glm::quat& deltaRot);
 	void rotateLocal(const glm::quat& deltaRot);
+    void rotateAroundPoint(const glm::vec3& point, const glm::quat &deltaRot);
 
 	void scale(const glm::vec3& scale);
 

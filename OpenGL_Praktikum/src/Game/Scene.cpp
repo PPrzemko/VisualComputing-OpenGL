@@ -73,8 +73,50 @@ bool Scene::init()
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-        rot = new Transform();
-        rot->rotate(glm::vec3(0.1,1.57f,0));
+        world = new Transform();
+        world->rotate(glm::vec3(0.1,0.4,0));
+
+        head = new Transform();
+        head->translate(glm::vec3(0,0.5,0));
+        head->scale(glm::vec3(0.3,0.3,0.3));
+
+        body = new Transform();
+        body->scale(glm::vec3(0.4,0.6,0.4));
+
+        //Left Arm
+        leftArm = new Transform();
+        leftArm->translate(glm::vec3(-0.3,0.15,0));
+
+        leftUpperArm = new Transform();
+        leftUpperArm->scale(glm::vec3(0.1,0.3,0.1));
+
+        leftLowerArm = new Transform();
+        leftLowerArm->translate(glm::vec3(0,-0.35,0));
+        leftLowerArm->scale(glm::vec3(0.1,0.3,0.1));
+        leftLowerArm->rotateAroundPoint(glm::vec3(0,-0.15,0),glm::vec3(0.45,0,0));
+
+        //Right Arm
+        rightArm = new Transform();
+        rightArm->translate(glm::vec3(0.3,0.15,0));
+
+        rightUpperArm = new Transform();
+        rightUpperArm->scale(glm::vec3(0.1,0.3,0.1));
+
+        rightLowerArm = new Transform();
+        rightLowerArm->translate(glm::vec3(0,-0.35,0));
+        rightLowerArm->scale(glm::vec3(0.1,0.3,0.1));
+        rightLowerArm->rotateAroundPoint(glm::vec3(0,-0.15,0),glm::vec3(0.45,0,0));
+
+        leftLeg = new Transform();
+        leftLeg->translate(glm::vec3(-0.1,-0.6,0));
+        leftLeg->scale(glm::vec3(0.1,0.5,0.1));
+        leftLeg->rotateAroundPoint(glm::vec3(0,-0.3,0),glm::vec3(0.45,0,0));
+
+        rightLeg = new Transform();
+        rightLeg->translate(glm::vec3(0.1,-0.6,0));
+        rightLeg->scale(glm::vec3(0.1,0.5,0.1));
+        rightLeg->rotateAroundPoint(glm::vec3(0,-0.3,0),glm::vec3(-0.45,0,0));
+
 
         //1.4 Backface culling
         /*
@@ -85,6 +127,11 @@ bool Scene::init()
         glCullFace(GL_BACK);
 
         glClearColor(0.10f, 0.10f, 0.10f, 1.0f);
+
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_GREATER);
+        glClearDepth(0.0);
+
 
         std::cout << "Scene initialization done\n";
         return true;
@@ -98,17 +145,50 @@ bool Scene::init()
 void Scene::render(float dt)
 {
 
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     /*
     * ************
     * Place your code here!
     * ************
     */
     glBindVertexArray(vaoID); //activate VAO and implicit VBO
-    m_shader->setUniform("model", rot->getMatrix() , false);
-    rot->rotate(glm::vec3(0*dt, 0.1f*dt, 0));
+
+    //world
+    world->rotate(glm::vec3(0,0.3*dt,0));
+    //head
+    m_shader->setUniform("model", world->getMatrix() * head->getMatrix() , false);
     glDrawElements(GL_TRIANGLES, indSize,GL_UNSIGNED_INT,0);
+
+    //body
+    m_shader->setUniform("model", world->getMatrix() * body->getMatrix() , false);
+    glDrawElements(GL_TRIANGLES, indSize,GL_UNSIGNED_INT,0);
+
+    //leftUpperArm
+    m_shader->setUniform("model", world->getMatrix() * leftArm->getMatrix() * leftUpperArm->getMatrix() , false);
+    glDrawElements(GL_TRIANGLES, indSize,GL_UNSIGNED_INT,0);
+
+    //rightUpperArm
+    m_shader->setUniform("model", world->getMatrix() * rightArm->getMatrix() * rightUpperArm->getMatrix() , false);
+    glDrawElements(GL_TRIANGLES, indSize,GL_UNSIGNED_INT,0);
+
+    //leftLowerArm
+    m_shader->setUniform("model", world->getMatrix() * leftArm->getMatrix() * leftLowerArm->getMatrix(), false);
+    glDrawElements(GL_TRIANGLES, indSize,GL_UNSIGNED_INT,0);
+
+    //rightLowerArm
+    m_shader->setUniform("model", world->getMatrix() * rightArm->getMatrix() * rightLowerArm->getMatrix(), false);
+    glDrawElements(GL_TRIANGLES, indSize,GL_UNSIGNED_INT,0);
+
+    //leftLeg
+    m_shader->setUniform("model", world->getMatrix() * leftLeg->getMatrix() , false);
+    glDrawElements(GL_TRIANGLES, indSize,GL_UNSIGNED_INT,0);
+
+    //rightLeg
+    m_shader->setUniform("model", world->getMatrix() * rightLeg->getMatrix() , false);
+    glDrawElements(GL_TRIANGLES, indSize,GL_UNSIGNED_INT,0);
+
     glBindVertexArray(0);
+
 
 
 

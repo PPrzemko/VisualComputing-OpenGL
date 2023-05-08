@@ -201,3 +201,13 @@ glm::mat4 Transform::getInverseMatrix()
 
 Transform::~Transform()
 {}
+
+void Transform::rotateAroundPoint(const glm::vec3& point, const glm::quat &deltaRot) {
+
+	glm::mat4x4 mm = getMatrix();
+	mm = glm::translate(-point)*mm;
+	mm = glm::toMat4(deltaRot)*mm;
+	mm = glm::translate(point) *mm;
+	setMatrix(mm);
+
+}
