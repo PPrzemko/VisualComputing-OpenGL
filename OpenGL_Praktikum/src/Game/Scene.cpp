@@ -148,14 +148,22 @@ bool Scene::init()
 
 void Scene::render(float dt)
 {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    //Clock for animation
     totalTime += dt;
     if(totalTime > 3.5){
         reverseAnim = !reverseAnim;
         totalTime = 0;
 
     }
-    //std::cout << "TotalTime: " << totalTime << std::endl;
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    //Calculate new color and set colorAnimation Uniform
+    colorTime += dt;
+    float color = sin(colorTime) * 0.5;
+    m_shader->setUniform("colorAnim", color);
+
+
     /*
     * ************
     * Place your code here!

@@ -33,6 +33,7 @@ private:
     int indSize;
 
     float totalTime;
+    float colorTime;
     bool reverseAnim;
 
     Transform *world;
