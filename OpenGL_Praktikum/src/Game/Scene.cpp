@@ -73,52 +73,18 @@ bool Scene::init()
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-        world = new Transform();
-        world->rotate(glm::vec3(0.1,0.4,0));
+        //Camera
+        view = new Transform();
+        view->setMatrix(glm::lookAt(glm::vec3(0,0,-2), glm::vec3(0,0,1), glm::vec3(0,1,0)));
+        m_shader->setUniform("view", view->getMatrix(),false);
 
-        head = new Transform();
-        head->translate(glm::vec3(0,0.5,0));
-        head->scale(glm::vec3(0.3,0.3,0.3));
+        //Perspective
+        perspective = new Transform();
+        float ratio = 1280.0f / 720.0f;
+        perspective->setMatrix(glm::perspective(45.0f, ratio, 0.5f, 5.0f));
+        m_shader->setUniform("projection", perspective->getMatrix(),false);
 
-        body = new Transform();
-        body->scale(glm::vec3(0.4,0.6,0.4));
-
-        //Left Arm
-        leftArm = new Transform();
-        leftArm->translate(glm::vec3(-0.3,0.15,0));
-        leftArm->rotate(glm::vec3(-0.80,0,0));
-
-        leftUpperArm = new Transform();
-        leftUpperArm->scale(glm::vec3(0.1,0.3,0.1));
-
-        leftLowerArm = new Transform();
-        leftLowerArm->translate(glm::vec3(0,-0.35,0));
-        leftLowerArm->scale(glm::vec3(0.1,0.3,0.1));
-        leftLowerArm->rotateAroundPoint(glm::vec3(0,-0.15,0),glm::vec3(0.45,0,0));
-
-        //Right Arm
-        rightArm = new Transform();
-        rightArm->translate(glm::vec3(0.3,0.15,0));
-        rightArm->rotate(glm::vec3(0.80,0,0));
-
-        rightUpperArm = new Transform();
-        rightUpperArm->scale(glm::vec3(0.1,0.3,0.1));
-
-        rightLowerArm = new Transform();
-        rightLowerArm->translate(glm::vec3(0,-0.35,0));
-        rightLowerArm->scale(glm::vec3(0.1,0.3,0.1));
-        rightLowerArm->rotateAroundPoint(glm::vec3(0,-0.15,0),glm::vec3(0.45,0,0));
-
-        leftLeg = new Transform();
-        leftLeg->translate(glm::vec3(-0.1,-0.6,0));
-        leftLeg->scale(glm::vec3(0.1,0.5,0.1));
-        leftLeg->rotateAroundPoint(glm::vec3(-0.1,-0.12,0),glm::vec3(-0.80,0,0));
-
-        rightLeg = new Transform();
-        rightLeg->translate(glm::vec3(0.1,-0.6,0));
-        rightLeg->scale(glm::vec3(0.1,0.5,0.1));
-        rightLeg->rotateAroundPoint(glm::vec3(0.1,-0.12,0),glm::vec3(0.80,0,0));
-
+        initRobot();
 
         //1.4 Backface culling
         /*
@@ -131,8 +97,8 @@ bool Scene::init()
         glClearColor(0.10f, 0.10f, 0.10f, 1.0f);
 
         glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_GREATER);
-        glClearDepth(0.0);
+        glDepthFunc(GL_LESS); // Default-Value, könnte auch weggelassen werden
+        glClearDepth(1.0); // Default-Value, könnte auch weggelassen werden
 
         totalTime= 0;
         reverseAnim = true;
@@ -144,6 +110,56 @@ bool Scene::init()
 	{
 	    throw std::logic_error("Scene initialization failed:\n" + std::string(ex.what()) + "\n");
 	}
+}
+
+void Scene::initRobot() {
+    world = new Transform();
+    world->rotate(glm::vec3(0.1, 0.4, 0));
+    //world->scale(glm::vec3(0.5, 0.5, 0.5));
+    //world->translate(glm::vec3(0, 0, 0.5));
+
+    head = new Transform();
+    head->translate(glm::vec3(0, 0.5, 0));
+    head->scale(glm::vec3(0.3, 0.3, 0.3));
+
+    body = new Transform();
+    body->scale(glm::vec3(0.4, 0.6, 0.4));
+
+    //Left Arm
+    leftArm = new Transform();
+    leftArm->translate(glm::vec3(-0.3, 0.15, 0));
+    leftArm->rotate(glm::vec3(-0.80, 0, 0));
+
+    leftUpperArm = new Transform();
+    leftUpperArm->scale(glm::vec3(0.1, 0.3, 0.1));
+
+    leftLowerArm = new Transform();
+    leftLowerArm->translate(glm::vec3(0, -0.35, 0));
+    leftLowerArm->scale(glm::vec3(0.1, 0.3, 0.1));
+    leftLowerArm->rotateAroundPoint(glm::vec3(0, -0.15, 0), glm::vec3(0.45, 0, 0));
+
+    //Right Arm
+    rightArm = new Transform();
+    rightArm->translate(glm::vec3(0.3, 0.15, 0));
+    rightArm->rotate(glm::vec3(0.80, 0, 0));
+
+    rightUpperArm = new Transform();
+    rightUpperArm->scale(glm::vec3(0.1, 0.3, 0.1));
+
+    rightLowerArm = new Transform();
+    rightLowerArm->translate(glm::vec3(0, -0.35, 0));
+    rightLowerArm->scale(glm::vec3(0.1, 0.3, 0.1));
+    rightLowerArm->rotateAroundPoint(glm::vec3(0, -0.15, 0), glm::vec3(0.45, 0, 0));
+
+    leftLeg = new Transform();
+    leftLeg->translate(glm::vec3(-0.1, -0.6, 0));
+    leftLeg->scale(glm::vec3(0.1, 0.5, 0.1));
+    leftLeg->rotateAroundPoint(glm::vec3(-0.1, -0.12, 0), glm::vec3(-0.80, 0, 0));
+
+    rightLeg = new Transform();
+    rightLeg->translate(glm::vec3(0.1, -0.6, 0));
+    rightLeg->scale(glm::vec3(0.1, 0.5, 0.1));
+    rightLeg->rotateAroundPoint(glm::vec3(0.1, -0.12, 0), glm::vec3(0.80, 0, 0));
 }
 
 void Scene::render(float dt)
@@ -171,8 +187,21 @@ void Scene::render(float dt)
     */
     glBindVertexArray(vaoID); //activate VAO and implicit VBO
 
-    //world
-    world->rotate(glm::vec3(0,0.3*dt,0));
+
+    if (m_window->getInput().getKeyState(Key::D) == KeyState::Pressed)
+    {
+        world->rotate(glm::vec3(0,0.6*dt,0));
+
+    }
+    if (m_window->getInput().getKeyState(Key::A) == KeyState::Pressed)
+    {
+        world->rotate(glm::vec3(0,-0.6*dt,0));
+
+    }
+
+        //world
+    //world->rotate(glm::vec3(0,0.3*dt,0));
+
     //head
     m_shader->setUniform("model", world->getMatrix() * head->getMatrix() , false);
     glDrawElements(GL_TRIANGLES, indSize,GL_UNSIGNED_INT,0);

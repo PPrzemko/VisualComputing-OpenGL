@@ -48,5 +48,9 @@ private:
     Transform *leftArm;
     Transform *rightArm;
 
+    Transform *view;
+    Transform *perspective;
+
+    void initRobot();
 };
 
