@@ -103,6 +103,10 @@ bool Scene::init()
         totalTime= 0;
         reverseAnim = true;
 
+        colorR = 0.0f;
+        colorG = 0.0f;
+        colorB = 0.0f;
+
         std::cout << "Scene initialization done\n";
         return true;
 	}
@@ -173,12 +177,33 @@ void Scene::render(float dt)
         totalTime = 0;
 
     }
-
     //Calculate new color and set colorAnimation Uniform
-    colorTime += dt;
+    /*colorTime += dt;
     float color = sin(colorTime) * 0.5;
-    m_shader->setUniform("colorAnim", color);
+    m_shader->setUniform("colorAnim", color); */
 
+    if (m_window->getInput().getKeyState(Key::R) == KeyState::Pressed)
+    {
+        colorR= 1;
+    }else
+    {
+        colorR= 0;
+    if (m_window->getInput().getKeyState(Key::G) == KeyState::Pressed)
+    {
+        colorG= 1;
+    }else{
+        colorG= 0;}
+    }
+    if (m_window->getInput().getKeyState(Key::B) == KeyState::Pressed)
+    {
+        colorB= 1;
+    }else{
+        colorB= 0;
+    }
+
+    m_shader->setUniform("colorR", colorR);
+    m_shader->setUniform("colorG", colorG);
+    m_shader->setUniform("colorB", colorB);
 
     /*
     * ************
@@ -190,15 +215,16 @@ void Scene::render(float dt)
 
     if (m_window->getInput().getKeyState(Key::D) == KeyState::Pressed)
     {
-        world->rotate(glm::vec3(0,0.6*dt,0));
+        view->rotate(glm::vec3(0,0.6*dt,0));
 
     }
     if (m_window->getInput().getKeyState(Key::A) == KeyState::Pressed)
     {
-        world->rotate(glm::vec3(0,-0.6*dt,0));
+        view->rotate(glm::vec3(0,-0.6*dt,0));
 
     }
 
+    m_shader->setUniform("view", view->getMatrix(), false);
         //world
     //world->rotate(glm::vec3(0,0.3*dt,0));
 
@@ -252,7 +278,6 @@ void Scene::render(float dt)
         rightLeg->rotateAroundPoint(glm::vec3(0.1,-0.12,0),glm::vec3(0.45 *dt,0,0));
     }
 
-
 }
 
 void Scene::update(float dt)
@@ -272,6 +297,10 @@ void Scene::onKey(Key key, Action action, Modifier modifier)
 
 void Scene::onMouseMove(MousePosition mouseposition)
 {
+    /*
+    auto directioX = mouseposition.X - mouseposition.oldX;
+    auto directioY = mouseposition.Y - mouseposition.oldY;
+    view->rotate(glm::vec3(0.01*directioY,0.01*directioX,0)); */
 
 }
 

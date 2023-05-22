@@ -5,9 +5,11 @@ in vec3 colorVS;
 //fragment shader output
 out vec4 color;
 
-uniform float colorAnim;
+uniform float colorR;
+uniform float colorG;
+uniform float colorB;
 
 void main(){
-    color = vec4(colorVS.x + colorAnim, colorVS.y - colorAnim, colorVS.z + colorAnim, 1.0);
+    color = vec4(colorVS.x + colorR, colorVS.y + colorG, colorVS.z + colorB, 1.0);
 }
 

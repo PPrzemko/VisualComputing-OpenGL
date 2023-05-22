@@ -34,6 +34,7 @@ private:
 
     float totalTime;
     float colorTime;
+    float colorR, colorG, colorB;
     bool reverseAnim;
 
     Transform *world;
