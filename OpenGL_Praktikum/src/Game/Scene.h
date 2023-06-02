@@ -34,6 +34,7 @@ private:
 
     float totalTime;
     float colorTime;
+    float colorR, colorG, colorB;
     bool reverseAnim;
 
     Transform *world;
@@ -48,5 +49,9 @@ private:
     Transform *leftArm;
     Transform *rightArm;
 
+    Transform *view;
+    Transform *perspective;
+
+    void initRobot();
 };
 
